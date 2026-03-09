@@ -242,20 +242,12 @@ fun PlayerScreen(
                             KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN,
                             KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_DPAD_RIGHT -> {
                                 if (!showOverlay) {
+                                    // Show overlay on any DPAD press while hidden
                                     showOverlay = true
                                     true
                                 } else {
-                                    when (event.nativeKeyEvent.keyCode) {
-                                        KeyEvent.KEYCODE_DPAD_LEFT -> {
-                                            exoPlayer.seekTo(maxOf(0, exoPlayer.currentPosition - 10000))
-                                            true
-                                        }
-                                        KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                                            exoPlayer.seekTo(exoPlayer.currentPosition + 10000)
-                                            true
-                                        }
-                                        else -> false
-                                    }
+                                    // Let Compose focus system handle DPAD navigation between buttons
+                                    false
                                 }
                             }
                             else -> false
