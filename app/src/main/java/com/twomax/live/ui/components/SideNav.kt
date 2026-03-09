@@ -5,6 +5,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,7 +28,6 @@ data class NavItem(val screen: Screen, val label: String, val icon: String)
 
 val navItems = listOf(
     NavItem(Screen.Home, "Home", "\uD83C\uDFE0"),
-    NavItem(Screen.Search, "Search", "\uD83D\uDD0D"),
     NavItem(Screen.LiveTv, "Live TV", "\uD83D\uDCFA"),
     NavItem(Screen.Movies, "Movies", "\uD83C\uDFAC"),
     NavItem(Screen.Series, "TV Shows", "\uD83C\uDFAD"),
@@ -64,48 +65,53 @@ fun SideNav(
             contentScale = ContentScale.Fit
         )
 
-        navItems.forEach { item ->
-            val isSelected = currentRoute == item.screen.route
-            var isFocused by remember { mutableStateOf(false) }
+        LazyColumn(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
+        ) {
+            items(navItems) { item ->
+                val isSelected = currentRoute == item.screen.route
+                var isFocused by remember { mutableStateOf(false) }
 
-            Surface(
-                onClick = { onNavigate(item.screen) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp)
-                    .onFocusChanged { isFocused = it.isFocused },
-                shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(12.dp)),
-                colors = ClickableSurfaceDefaults.colors(
-                    containerColor = if (isSelected) Primary.copy(alpha = 0.2f) else Color.Transparent,
-                    focusedContainerColor = SurfaceElevated,
-                    pressedContainerColor = SurfaceElevated
-                ),
-                border = ClickableSurfaceDefaults.border(
-                    focusedBorder = Border(
-                        border = BorderStroke(2.dp, FocusBorder)
-                    )
-                ),
-                scale = ClickableSurfaceDefaults.scale(focusedScale = 1.05f)
-            ) {
-                Column(
+                Surface(
+                    onClick = { onNavigate(item.screen) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .onFocusChanged { isFocused = it.isFocused },
+                    shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(12.dp)),
+                    colors = ClickableSurfaceDefaults.colors(
+                        containerColor = if (isSelected) Primary.copy(alpha = 0.2f) else Color.Transparent,
+                        focusedContainerColor = SurfaceElevated,
+                        pressedContainerColor = SurfaceElevated
+                    ),
+                    border = ClickableSurfaceDefaults.border(
+                        focusedBorder = Border(
+                            border = BorderStroke(2.dp, FocusBorder)
+                        )
+                    ),
+                    scale = ClickableSurfaceDefaults.scale(focusedScale = 1.05f)
                 ) {
-                    Text(
-                        text = item.icon,
-                        fontSize = 20.sp,
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(modifier = Modifier.height(2.dp))
-                    Text(
-                        text = item.label,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = if (isSelected) Primary else TextSecondary,
-                        textAlign = TextAlign.Center,
-                        maxLines = 1
-                    )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = item.icon,
+                            fontSize = 20.sp,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = item.label,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = if (isSelected) Primary else TextSecondary,
+                            textAlign = TextAlign.Center,
+                            maxLines = 1
+                        )
+                    }
                 }
             }
         }

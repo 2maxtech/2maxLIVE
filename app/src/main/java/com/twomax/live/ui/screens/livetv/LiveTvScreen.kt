@@ -129,6 +129,24 @@ fun LiveTvScreen(
                     LiveTvSortChip("Default", LiveTvSortOrder.DEFAULT, uiState.sortOrder) { viewModel.setSortOrder(it) }
                     LiveTvSortChip("A-Z", LiveTvSortOrder.A_Z, uiState.sortOrder) { viewModel.setSortOrder(it) }
                     LiveTvSortChip("Z-A", LiveTvSortOrder.Z_A, uiState.sortOrder) { viewModel.setSortOrder(it) }
+                    Surface(
+                        onClick = { navController.navigate(Screen.Search.route) },
+                        shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(50)),
+                        colors = ClickableSurfaceDefaults.colors(
+                            containerColor = SurfaceElevated,
+                            focusedContainerColor = Primary
+                        ),
+                        border = ClickableSurfaceDefaults.border(
+                            focusedBorder = Border(BorderStroke(2.dp, FocusBorder))
+                        )
+                    ) {
+                        Text(
+                            "\uD83D\uDD0D Search",
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = TextSecondary
+                        )
+                    }
                 }
             LazyColumn(
                 modifier = Modifier.weight(1f).fillMaxHeight().padding(horizontal = 8.dp, vertical = 4.dp),

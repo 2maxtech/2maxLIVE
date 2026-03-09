@@ -9,6 +9,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
+import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -64,6 +65,11 @@ fun PlayerScreen(
     var isBuffering by remember { mutableStateOf(true) }
     var playerError by remember { mutableStateOf<String?>(null) }
     val focusRequester = remember { FocusRequester() }
+    val playPauseFocusRequester = remember { FocusRequester() }
+
+    // Progress tracking
+    var currentPosition by remember { mutableStateOf(0L) }
+    var duration by remember { mutableStateOf(0L) }
 
     // Track panel state
     var showSubtitlePanel by remember { mutableStateOf(false) }
@@ -121,6 +127,22 @@ fun PlayerScreen(
         if (showOverlay) {
             delay(5000)
             showOverlay = false
+        }
+    }
+
+    // Poll playback position while overlay is visible
+    LaunchedEffect(showOverlay) {
+        while (showOverlay) {
+            currentPosition = exoPlayer.currentPosition.coerceAtLeast(0L)
+            duration = exoPlayer.duration.takeIf { it > 0 && it != Long.MIN_VALUE } ?: 0L
+            delay(500)
+        }
+    }
+
+    // Focus Play/Pause button when overlay appears
+    LaunchedEffect(showOverlay) {
+        if (showOverlay) {
+            try { playPauseFocusRequester.requestFocus() } catch (_: Exception) {}
         }
     }
 
@@ -198,13 +220,12 @@ fun PlayerScreen(
                     } else {
                         when (event.nativeKeyEvent.keyCode) {
                             KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER -> {
-                                when {
-                                    showOverlay -> {
-                                        if (exoPlayer.isPlaying) exoPlayer.pause() else exoPlayer.play()
-                                    }
-                                    else -> showOverlay = true
+                                if (!showOverlay) {
+                                    showOverlay = true
+                                    true  // consume only when overlay is hidden (to show it)
+                                } else {
+                                    false  // let the focused Surface button handle ENTER
                                 }
-                                true
                             }
                             KeyEvent.KEYCODE_BACK -> {
                                 when {
@@ -326,13 +347,66 @@ fun PlayerScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    // Secondary controls row (subtitle / resolution)
+                    // Progress bar (only for non-live content)
+                    if (duration > 0) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                formatTime(currentPosition),
+                                style = MaterialTheme.typography.labelMedium,
+                                color = TextSecondary
+                            )
+                            Text(
+                                formatTime(duration),
+                                style = MaterialTheme.typography.labelMedium,
+                                color = TextSecondary
+                            )
+                        }
+                        val progress = (currentPosition.toFloat() / duration).coerceIn(0f, 1f)
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(4.dp)
+                                .clip(RoundedCornerShape(2.dp))
+                                .background(SurfaceHighest)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth(progress)
+                                    .fillMaxHeight()
+                                    .background(Primary)
+                            )
+                        }
+                    }
+
+                    // Unified controls row: [-10s] [CC] [Play/Pause] [Resolution] [+10s]
+                    val hasSubs = subtitleTracks.size > 1
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // CC button - always visible; disabled (greyed) when no subtitle tracks
-                        val hasSubs = subtitleTracks.size > 1
+                        // Rewind
+                        Surface(
+                            onClick = { exoPlayer.seekTo(maxOf(0, exoPlayer.currentPosition - 10000)) },
+                            shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(50)),
+                            colors = ClickableSurfaceDefaults.colors(
+                                containerColor = SurfaceElevated.copy(alpha = 0.7f),
+                                focusedContainerColor = Primary
+                            ),
+                            border = ClickableSurfaceDefaults.border(
+                                focusedBorder = Border(BorderStroke(2.dp, FocusBorder))
+                            )
+                        ) {
+                            Text(
+                                text = "-10s",
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                                style = MaterialTheme.typography.labelLarge
+                            )
+                        }
+
+                        // CC button
                         Surface(
                             onClick = {
                                 if (hasSubs) {
@@ -361,7 +435,28 @@ fun PlayerScreen(
                             )
                         }
 
-                        // Resolution button - always enabled
+                        // Play/Pause
+                        Surface(
+                            onClick = { if (exoPlayer.isPlaying) exoPlayer.pause() else exoPlayer.play() },
+                            modifier = Modifier.focusRequester(playPauseFocusRequester),
+                            shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(50)),
+                            colors = ClickableSurfaceDefaults.colors(
+                                containerColor = Primary,
+                                focusedContainerColor = PrimaryVariant
+                            ),
+                            border = ClickableSurfaceDefaults.border(
+                                focusedBorder = Border(BorderStroke(2.dp, Glow))
+                            ),
+                            scale = ClickableSurfaceDefaults.scale(focusedScale = 1.1f)
+                        ) {
+                            Text(
+                                text = if (isPlaying) "Pause" else "Play",
+                                modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                        }
+
+                        // Resolution button
                         Surface(
                             onClick = {
                                 showSubtitlePanel = false
@@ -384,51 +479,6 @@ fun PlayerScreen(
                                 modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = TextPrimary
-                            )
-                        }
-                    }
-
-                    // Main controls row
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(24.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        // Rewind
-                        Surface(
-                            onClick = { exoPlayer.seekTo(maxOf(0, exoPlayer.currentPosition - 10000)) },
-                            shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(50)),
-                            colors = ClickableSurfaceDefaults.colors(
-                                containerColor = SurfaceElevated.copy(alpha = 0.7f),
-                                focusedContainerColor = Primary
-                            ),
-                            border = ClickableSurfaceDefaults.border(
-                                focusedBorder = Border(BorderStroke(2.dp, FocusBorder))
-                            )
-                        ) {
-                            Text(
-                                text = "-10s",
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                                style = MaterialTheme.typography.labelLarge
-                            )
-                        }
-
-                        // Play/Pause
-                        Surface(
-                            onClick = { if (exoPlayer.isPlaying) exoPlayer.pause() else exoPlayer.play() },
-                            shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(50)),
-                            colors = ClickableSurfaceDefaults.colors(
-                                containerColor = Primary,
-                                focusedContainerColor = PrimaryVariant
-                            ),
-                            border = ClickableSurfaceDefaults.border(
-                                focusedBorder = Border(BorderStroke(2.dp, Glow))
-                            ),
-                            scale = ClickableSurfaceDefaults.scale(focusedScale = 1.1f)
-                        ) {
-                            Text(
-                                text = if (isPlaying) "Pause" else "Play",
-                                modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
-                                style = MaterialTheme.typography.titleMedium
                             )
                         }
 
@@ -614,4 +664,11 @@ private fun TrackSelectionPanel(
             }
         }
     }
+}
+
+private fun formatTime(ms: Long): String {
+    val totalSec = ms / 1000
+    val min = totalSec / 60
+    val sec = totalSec % 60
+    return "%d:%02d".format(min, sec)
 }

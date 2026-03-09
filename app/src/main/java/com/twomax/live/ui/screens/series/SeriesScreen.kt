@@ -125,6 +125,24 @@ fun SeriesScreen(
                     SeriesSortChip("Default", SeriesSortOrder.DEFAULT, uiState.sortOrder) { viewModel.setSortOrder(it) }
                     SeriesSortChip("A-Z", SeriesSortOrder.A_Z, uiState.sortOrder) { viewModel.setSortOrder(it) }
                     SeriesSortChip("Z-A", SeriesSortOrder.Z_A, uiState.sortOrder) { viewModel.setSortOrder(it) }
+                    Surface(
+                        onClick = { navController.navigate(Screen.Search.route) },
+                        shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(50)),
+                        colors = ClickableSurfaceDefaults.colors(
+                            containerColor = SurfaceElevated,
+                            focusedContainerColor = Primary
+                        ),
+                        border = ClickableSurfaceDefaults.border(
+                            focusedBorder = Border(BorderStroke(2.dp, FocusBorder))
+                        )
+                    ) {
+                        Text(
+                            "\uD83D\uDD0D Search",
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = TextSecondary
+                        )
+                    }
                 }
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(minSize = 150.dp),
