@@ -76,7 +76,7 @@ object NetworkModule {
     @Singleton
     fun provideActivationApi(okHttpClient: OkHttpClient, moshi: Moshi): ActivationApi {
         return Retrofit.Builder()
-            .baseUrl("http://192.168.20.11:3000/")
+            .baseUrl("https://player.2max.tech/")
             .client(okHttpClient)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
