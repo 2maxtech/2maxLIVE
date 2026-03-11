@@ -11,7 +11,22 @@
 # Keep Kotlin metadata so type tokens survive ProGuard
 -keepattributes RuntimeVisibleAnnotations
 -keepattributes AnnotationDefault
+-keepattributes InnerClasses,EnclosingMethod
 -keep class kotlin.Metadata { *; }
+-keep class kotlin.reflect.** { *; }
+
+# Moshi — keep type parameters and generated adapters
+-keepclassmembers class * {
+    @com.squareup.moshi.FromJson *;
+    @com.squareup.moshi.ToJson *;
+}
+-keep class com.squareup.moshi.internal.** { *; }
+
+# Keep all DTO and model class type info for Moshi/Retrofit
+-keepclassmembers,allowobfuscation class * {
+    @com.squareup.moshi.Json <fields>;
+}
+-keepnames @com.squareup.moshi.JsonClass class *
 
 # Retrofit
 -keepattributes Signature

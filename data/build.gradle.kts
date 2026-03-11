@@ -44,9 +44,8 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.moshi)
 
-    // Moshi
+    // Moshi (KSP codegen only — no reflection library needed)
     implementation(libs.moshi)
-    implementation(libs.moshi.kotlin)
     ksp(libs.moshi.kotlin.codegen)
 
     // OkHttp
