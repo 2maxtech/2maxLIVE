@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Device {
+  id            String      @id @default(cuid())
+  macAddress    String      @unique
+  firstSeen     DateTime    @default(now())
+  lastCheckedIn DateTime?
+  isLocked      Boolean     @default(false)
+  lockPin       String?
+
+  activation Activation?
+  playlists  Playlist[]
+}
+
+model Activation {
+  id          String    @id @default(cuid())
+  deviceId    String    @unique
+  device      Device    @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  plan        String    @default("MANUAL")
+  status      String    @default("ACTIVE")
+  activatedAt DateTime  @default(now())
+  expiresAt   DateTime?
+  createdBy   String?
+}
+
+model Playlist {
+  id        String   @id @default(cuid())
+  deviceId  String
+  device    Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  name      String   @default("My Playlist")
+  type      String
+  serverUrl String?
+  username  String?
+  password  String?
+  m3uUrl    String?
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([deviceId, sortOrder])
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  createdAt    DateTime @default(now())
+}

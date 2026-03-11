@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:16-alpine
@@ -20,7 +18,7 @@ services:
 
   web:
     build:
-      context: ../web
+      context: ../web/
       dockerfile: Dockerfile
     restart: unless-stopped
     expose:

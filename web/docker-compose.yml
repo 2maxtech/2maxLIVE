@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: twomaxlive
+      POSTGRES_PASSWORD: twomaxlive
+      POSTGRES_DB: twomaxlive
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  web:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: "postgresql://twomaxlive:twomaxlive@db:5432/twomaxlive?schema=public"
+      JWT_SECRET: "${JWT_SECRET:-change-this-in-production}"
+      ADMIN_EMAIL: "${ADMIN_EMAIL:-admin@2maxlive.com}"
+      ADMIN_PASSWORD: "${ADMIN_PASSWORD:-admin123}"
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:

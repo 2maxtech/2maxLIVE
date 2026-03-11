@@ -16,3 +16,4 @@ local.properties
 *.jks
 *.keystore
 .worktrees/
+web/node_modules/
