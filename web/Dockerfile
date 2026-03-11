@@ -1,6 +1,5 @@
-FROM node:18-alpine AS base
-RUN apk add --no-cache openssl openssl-dev libssl1.1 2>/dev/null || \
-    apk add --no-cache openssl openssl-dev
+FROM node:18-bookworm-slim AS base
+RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
 FROM base AS deps
 WORKDIR /app
@@ -14,8 +13,7 @@ COPY . .
 RUN npx prisma generate
 RUN npm run build
 
-FROM node:18-bookworm-slim AS runner
-RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+FROM base AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 RUN groupadd --system --gid 1001 nodejs
