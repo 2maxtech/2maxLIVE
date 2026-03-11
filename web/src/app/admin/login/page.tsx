@@ -98,7 +98,7 @@ export default function AdminLoginPage() {
             <input
               type="email"
               className="input-field"
-              placeholder="admin@2maxlive.com"
+              placeholder="admin@2max.tech"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required

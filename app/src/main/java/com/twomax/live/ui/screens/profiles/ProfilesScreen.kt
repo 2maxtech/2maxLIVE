@@ -48,7 +48,7 @@ fun ProfilesScreen(
                 color = TextPrimary
             )
             Text(
-                text = "Manage playlists at 2maxplayer.com",
+                text = "Manage playlists at player.2max.tech",
                 style = MaterialTheme.typography.bodySmall,
                 color = TextDisabled
             )
@@ -111,7 +111,7 @@ fun ProfilesScreen(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Add playlists at 2maxplayer.com",
+                        text = "Add playlists at player.2max.tech",
                         style = MaterialTheme.typography.bodyLarge,
                         color = TextDisabled
                     )

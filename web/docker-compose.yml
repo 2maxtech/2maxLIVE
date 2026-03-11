@@ -21,7 +21,7 @@ services:
     environment:
       DATABASE_URL: "postgresql://twomaxlive:twomaxlive@db:5432/twomaxlive?schema=public"
       JWT_SECRET: "${JWT_SECRET:-change-this-in-production}"
-      ADMIN_EMAIL: "${ADMIN_EMAIL:-admin@2maxlive.com}"
+      ADMIN_EMAIL: "${ADMIN_EMAIL:-admin@2max.tech}"
       ADMIN_PASSWORD: "${ADMIN_PASSWORD:-admin123}"
     depends_on:
       - db

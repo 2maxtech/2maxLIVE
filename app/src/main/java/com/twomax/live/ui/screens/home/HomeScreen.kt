@@ -43,7 +43,7 @@ fun HomeScreen(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(text = "No playlists found", style = MaterialTheme.typography.bodyLarge, color = TextSecondary)
                 Spacer(Modifier.height(8.dp))
-                Text(text = "Manage your playlists at 2maxplayer.com", style = MaterialTheme.typography.bodyMedium, color = TextDisabled)
+                Text(text = "Manage your playlists at player.2max.tech", style = MaterialTheme.typography.bodyMedium, color = TextDisabled)
                 Spacer(Modifier.height(4.dp))
                 Text(text = "Restart the app after adding playlists", style = MaterialTheme.typography.bodySmall, color = TextDisabled)
             }

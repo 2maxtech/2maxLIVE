@@ -81,7 +81,7 @@ fun ActivationScreen(
 
             // Instructions
             Text(
-                text = "Visit 2maxplayer.com/activation on your phone or computer\nand enter the Device ID above to activate",
+                text = "Visit player.2max.tech/activation on your phone or computer\nand enter the Device ID above to activate",
                 fontSize = 18.sp,
                 color = TextSecondary,
                 textAlign = TextAlign.Center,

@@ -120,7 +120,7 @@ fun SettingsScreen(
                     }
                     Column {
                         Text("Manage Playlists", style = MaterialTheme.typography.bodyMedium, color = TextSecondary)
-                        Text("Visit 2maxplayer.com to manage your playlists", style = MaterialTheme.typography.bodyMedium, color = Primary)
+                        Text("Visit player.2max.tech to manage your playlists", style = MaterialTheme.typography.bodyMedium, color = Primary)
                     }
                 }
             }
