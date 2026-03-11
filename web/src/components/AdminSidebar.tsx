@@ -55,16 +55,11 @@ export default function AdminSidebar() {
       {/* Logo */}
       <div className="px-6 py-6" style={{ borderBottom: '1px solid var(--border)' }}>
         <Link href="/admin" className="flex items-center gap-3 no-underline">
-          <img src="/logo.png" alt="2maX player" style={{ height: 64, width: 'auto' }} />
-          <div>
-            <div style={{ fontWeight: 700, fontSize: 16, color: 'var(--text-primary)' }}>
-              2maX player
-            </div>
-            <div style={{ fontSize: 11, color: 'var(--text-secondary)', letterSpacing: '0.08em', textTransform: 'uppercase' as const }}>
-              Admin Panel
-            </div>
-          </div>
+          <img src="/logo.png" alt="2maX player" style={{ height: 40, width: 'auto', maxWidth: 200 }} />
         </Link>
+        <div style={{ fontSize: 11, color: 'var(--text-secondary)', letterSpacing: '0.08em', textTransform: 'uppercase' as const, marginTop: 6 }}>
+          Admin Panel
+        </div>
       </div>
 
       {/* Navigation */}
