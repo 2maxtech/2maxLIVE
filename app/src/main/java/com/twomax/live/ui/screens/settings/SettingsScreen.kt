@@ -45,9 +45,10 @@ fun SettingsScreen(
             Surface(
                 onClick = { viewModel.toggleEpgAutoSync(!state.epgAutoSync) },
                 modifier = Modifier.fillMaxWidth(),
-                shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(12.dp)),
+                shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(16.dp)),
                 colors = ClickableSurfaceDefaults.colors(containerColor = CardBackground, focusedContainerColor = SurfaceElevated),
-                border = ClickableSurfaceDefaults.border(focusedBorder = Border(BorderStroke(2.dp, FocusBorder)))
+                border = ClickableSurfaceDefaults.border(focusedBorder = Border(BorderStroke(2.dp, FocusBorder))),
+                scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
