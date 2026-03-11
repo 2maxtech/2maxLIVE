@@ -31,8 +31,13 @@ ufw --force enable
 # --- 4. Clone repo ---
 echo "[4/6] Cloning repository..."
 INSTALL_DIR="/opt/2maxlive"
+
 if [ ! -d "$INSTALL_DIR" ]; then
-    git clone https://github.com/2maxtech/2maxLIVE.git "$INSTALL_DIR"
+    if [ -z "$GITHUB_PAT" ]; then
+        read -rsp "Enter GitHub Personal Access Token: " GITHUB_PAT
+        echo ""
+    fi
+    git clone "https://${GITHUB_PAT}@github.com/2maxtech/2maxLIVE.git" "$INSTALL_DIR"
 else
     cd "$INSTALL_DIR" && git pull
 fi
