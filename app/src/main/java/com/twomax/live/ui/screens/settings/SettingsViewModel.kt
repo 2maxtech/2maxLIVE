@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.*
 import com.twomax.live.data.sync.EpgSyncWorker
+import com.twomax.live.data.device.DeviceIdProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.*
@@ -14,16 +15,24 @@ import javax.inject.Inject
 
 data class SettingsUiState(
     val epgSyncIntervalHours: Int = 6,
-    val epgAutoSync: Boolean = true
+    val epgAutoSync: Boolean = true,
+    val deviceMac: String = "",
+    val activationStatus: String = "Unknown"
 )
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val deviceIdProvider: DeviceIdProvider
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SettingsUiState())
     val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
+
+    init {
+        // Load device MAC
+        _uiState.update { it.copy(deviceMac = deviceIdProvider.getMacAddress()) }
+    }
 
     fun updateEpgSyncInterval(hours: Int) {
         _uiState.update { it.copy(epgSyncIntervalHours = hours) }

@@ -54,6 +54,10 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.8"
     }
+
+    androidResources {
+        noCompress += "png"
+    }
 }
 
 dependencies {
@@ -101,6 +105,9 @@ dependencies {
     // Coil
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
+
+    // Material Icons Extended
+    implementation(libs.compose.material.icons.extended)
 
     // WorkManager
     implementation(libs.workmanager)

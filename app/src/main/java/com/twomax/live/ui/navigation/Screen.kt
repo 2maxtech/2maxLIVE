@@ -11,6 +11,8 @@ sealed class Screen(val route: String, val title: String, val icon: String) {
     data object Settings : Screen("settings", "Settings", "settings")
     data object Profiles : Screen("profiles", "Profiles", "profiles")
     data object Setup : Screen("setup", "Setup", "setup")
+    data object Activation : Screen("activation", "Activation", "activation")
+    data object Splash : Screen("splash", "Splash", "splash")
     data object Player : Screen("player/{streamUrl}/{streamTitle}", "Player", "player") {
         fun createRoute(streamUrl: String, streamTitle: String): String {
             val encodedUrl = android.util.Base64.encodeToString(streamUrl.toByteArray(), android.util.Base64.URL_SAFE or android.util.Base64.NO_WRAP)
@@ -20,5 +22,8 @@ sealed class Screen(val route: String, val title: String, val icon: String) {
     }
     data object SeriesDetail : Screen("series_detail/{seriesId}", "Series Detail", "series") {
         fun createRoute(seriesId: Long): String = "series_detail/$seriesId"
+    }
+    data object MovieDetail : Screen("movie_detail/{movieId}", "Movie Detail", "movie") {
+        fun createRoute(movieId: Long): String = "movie_detail/$movieId"
     }
 }

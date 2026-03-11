@@ -11,30 +11,38 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.LiveTv
+import androidx.compose.material.icons.filled.Movie
+import androidx.compose.material.icons.filled.VideoLibrary
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.automirrored.filled.PlaylistPlay
+import androidx.compose.material3.Icon
 import androidx.tv.material3.*
 import com.twomax.live.R
 import com.twomax.live.ui.navigation.Screen
 import com.twomax.live.ui.theme.*
 
-data class NavItem(val screen: Screen, val label: String, val icon: String)
+data class NavItem(val screen: Screen, val label: String, val icon: ImageVector)
 
 val navItems = listOf(
-    NavItem(Screen.Home, "Home", "\uD83C\uDFE0"),
-    NavItem(Screen.LiveTv, "Live TV", "\uD83D\uDCFA"),
-    NavItem(Screen.Movies, "Movies", "\uD83C\uDFAC"),
-    NavItem(Screen.Series, "TV Shows", "\uD83C\uDFAD"),
-    NavItem(Screen.Epg, "EPG", "\uD83D\uDCC5"),
-    NavItem(Screen.Favorites, "Favorites", "\u2B50"),
-    NavItem(Screen.Settings, "Settings", "\u2699\uFE0F"),
-    NavItem(Screen.Profiles, "Playlist", "\uD83D\uDCCB"),
+    NavItem(Screen.Home, "Home", Icons.Default.Home),
+    NavItem(Screen.LiveTv, "Live TV", Icons.Default.LiveTv),
+    NavItem(Screen.Movies, "Movies", Icons.Default.Movie),
+    NavItem(Screen.Series, "TV Shows", Icons.Default.VideoLibrary),
+    NavItem(Screen.Favorites, "Favorites", Icons.Default.Star),
+    NavItem(Screen.Settings, "Settings", Icons.Default.Settings),
+    NavItem(Screen.Profiles, "Playlist", Icons.AutoMirrored.Filled.PlaylistPlay),
 )
 
 @OptIn(ExperimentalTvMaterial3Api::class)
@@ -56,12 +64,10 @@ fun SideNav(
         // App logo/title
         Image(
             painter = painterResource(id = R.drawable.logo_2max),
-            contentDescription = "2maX Live",
+            contentDescription = "2maX player",
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 4.dp, end = 4.dp, bottom = 12.dp)
-                .aspectRatio(1f)
-                .clip(RoundedCornerShape(8.dp)),
+                .padding(start = 4.dp, end = 4.dp, bottom = 12.dp),
             contentScale = ContentScale.Fit
         )
 
@@ -90,7 +96,7 @@ fun SideNav(
                             border = BorderStroke(2.dp, FocusBorder)
                         )
                     ),
-                    scale = ClickableSurfaceDefaults.scale(focusedScale = 1.05f)
+                    scale = ClickableSurfaceDefaults.scale(focusedScale = 1.0f)
                 ) {
                     Column(
                         modifier = Modifier
@@ -98,10 +104,11 @@ fun SideNav(
                             .padding(vertical = 8.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(
-                            text = item.icon,
-                            fontSize = 20.sp,
-                            textAlign = TextAlign.Center
+                        Icon(
+                            imageVector = item.icon,
+                            contentDescription = item.label,
+                            modifier = Modifier.size(24.dp),
+                            tint = if (isSelected) Primary else TextSecondary
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(

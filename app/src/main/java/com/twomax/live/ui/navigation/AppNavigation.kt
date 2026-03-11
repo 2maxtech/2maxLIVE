@@ -18,18 +18,26 @@ import com.twomax.live.ui.screens.player.PlayerScreen
 import com.twomax.live.ui.screens.setup.SetupScreen
 import com.twomax.live.ui.screens.profiles.ProfilesScreen
 import com.twomax.live.ui.screens.favorites.FavoritesScreen
+import com.twomax.live.ui.screens.activation.ActivationScreen
+import com.twomax.live.ui.screens.movies.MovieDetailScreen
 import com.twomax.live.ui.screens.settings.SettingsScreen
+import com.twomax.live.ui.screens.splash.SplashScreen
+import com.twomax.live.data.sync.RemotePlaylistSync
 
 @Composable
 fun AppNavigation(
     navController: NavHostController,
+    startDestination: String = Screen.Home.route,
+    remotePlaylistSync: RemotePlaylistSync,
     modifier: Modifier = Modifier
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route,
+        startDestination = startDestination,
         modifier = modifier
     ) {
+        composable(Screen.Splash.route) { SplashScreen(navController, remotePlaylistSync) }
+        composable(Screen.Activation.route) { ActivationScreen(navController) }
         composable(Screen.Home.route) { HomeScreen(navController) }
         composable(Screen.Search.route) { SearchScreen(navController) }
         composable(Screen.LiveTv.route) { LiveTvScreen(navController) }
@@ -57,6 +65,15 @@ fun AppNavigation(
             PlayerScreen(
                 streamUrl = try { String(android.util.Base64.decode(rawUrl, android.util.Base64.URL_SAFE)) } catch (e: Exception) { rawUrl },
                 streamTitle = try { String(android.util.Base64.decode(rawTitle, android.util.Base64.URL_SAFE)) } catch (e: Exception) { rawTitle },
+                navController = navController
+            )
+        }
+        composable(
+            Screen.MovieDetail.route,
+            arguments = listOf(navArgument("movieId") { type = NavType.LongType })
+        ) { backStackEntry ->
+            MovieDetailScreen(
+                movieId = backStackEntry.arguments?.getLong("movieId") ?: 0L,
                 navController = navController
             )
         }

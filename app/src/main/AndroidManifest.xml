@@ -18,7 +18,7 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:banner="@drawable/banner"
         android:icon="@drawable/logo_2max"
-        android:label="2maxLIVE"
+        android:label="2maX player"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.NoTitleBar">
 

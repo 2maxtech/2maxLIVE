@@ -27,7 +27,10 @@ data class LiveTvUiState(
     val currentPrograms: Map<String, EpgProgram> = emptyMap(),
     val nextPrograms: Map<String, EpgProgram> = emptyMap(),
     val isLoading: Boolean = true,
-    val sortOrder: LiveTvSortOrder = LiveTvSortOrder.DEFAULT
+    val sortOrder: LiveTvSortOrder = LiveTvSortOrder.DEFAULT,
+    val selectedChannel: Channel? = null,
+    val selectedChannelSchedule: List<EpgProgram> = emptyList(),
+    val isScheduleLoading: Boolean = false
 )
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -134,6 +137,31 @@ class LiveTvViewModel @Inject constructor(
     fun setSortOrder(order: LiveTvSortOrder) {
         _sortOrder.value = order
         _uiState.update { it.copy(sortOrder = order) }
+    }
+
+    fun selectChannel(channel: Channel) {
+        _uiState.update { it.copy(selectedChannel = channel, isScheduleLoading = true, selectedChannelSchedule = emptyList()) }
+        viewModelScope.launch {
+            loadScheduleForChannel(channel.epgChannelId)
+        }
+    }
+
+    fun clearSelectedChannel() {
+        _uiState.update { it.copy(selectedChannel = null, selectedChannelSchedule = emptyList(), isScheduleLoading = false) }
+    }
+
+    private suspend fun loadScheduleForChannel(epgChannelId: String) {
+        if (epgChannelId.isEmpty()) {
+            _uiState.update { it.copy(isScheduleLoading = false) }
+            return
+        }
+        val now = System.currentTimeMillis()
+        val startTime = now - 3_600_000L          // 1 hour ago
+        val endTime = now + 12 * 3_600_000L       // 12 hours ahead
+        val programs = epgProgramDao.getPrograms(epgChannelId, startTime, endTime)
+            .first()
+            .map { it.toDomain() }
+        _uiState.update { it.copy(selectedChannelSchedule = programs, isScheduleLoading = false) }
     }
 
     fun toggleFavorite(channel: Channel) {

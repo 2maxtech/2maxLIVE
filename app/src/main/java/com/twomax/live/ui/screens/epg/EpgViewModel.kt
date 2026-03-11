@@ -9,6 +9,7 @@ import com.twomax.live.core.repository.ChannelRepository
 import com.twomax.live.core.repository.EpgRepository
 import com.twomax.live.core.repository.ProviderRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,6 +23,7 @@ data class EpgUiState(
     val isLoading: Boolean = true
 )
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class EpgViewModel @Inject constructor(
     private val channelRepository: ChannelRepository,
@@ -38,31 +40,32 @@ class EpgViewModel @Inject constructor(
 
     private fun loadData() {
         viewModelScope.launch {
-            providerRepository.getAll().collect { providers ->
-                val active = providers.firstOrNull { it.isActive } ?: providers.firstOrNull()
-                if (active != null) {
-                    channelRepository.getByProvider(active.id).collect { allChannels ->
-                        val liveChannels = allChannels.filter { it.streamType == StreamType.LIVE && it.epgChannelId.isNotEmpty() }
-                        _uiState.update { it.copy(channels = liveChannels, isLoading = false) }
-                        loadPrograms(liveChannels)
+            providerRepository.getAll()
+                .flatMapLatest { providers ->
+                    val active = providers.firstOrNull { it.isActive } ?: providers.firstOrNull()
+                    if (active != null) {
+                        channelRepository.getByProvider(active.id)
+                    } else {
+                        flowOf(emptyList())
                     }
-                } else {
-                    _uiState.update { it.copy(isLoading = false) }
                 }
-            }
+                .collect { allChannels ->
+                    val liveChannels = allChannels.filter {
+                        it.streamType == StreamType.LIVE && it.epgChannelId.isNotEmpty()
+                    }
+                    _uiState.update { it.copy(channels = liveChannels, isLoading = false) }
+                    loadPrograms(liveChannels)
+                }
         }
     }
 
     private fun loadPrograms(channels: List<Channel>) {
         val state = _uiState.value
         viewModelScope.launch {
-            val programsMap = mutableMapOf<String, List<EpgProgram>>()
-            channels.forEach { channel ->
-                epgRepository.getProgramsForChannel(channel.epgChannelId, state.startTimeMillis, state.endTimeMillis)
-                    .firstOrNull()?.let { programs ->
-                        programsMap[channel.epgChannelId] = programs
-                    }
-            }
+            val channelEpgIds = channels.map { it.epgChannelId }
+            val programsMap = epgRepository.getProgramsForChannels(
+                channelEpgIds, state.startTimeMillis, state.endTimeMillis
+            )
             _uiState.update { it.copy(programs = programsMap) }
         }
     }

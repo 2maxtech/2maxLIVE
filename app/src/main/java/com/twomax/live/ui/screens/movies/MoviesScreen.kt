@@ -10,6 +10,9 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -122,7 +125,7 @@ fun MoviesScreen(
             Column(modifier = Modifier.weight(1f).fillMaxHeight()) {
                 // Sort bar
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     SortChip("Default", SortOrder.DEFAULT, uiState.sortOrder) { viewModel.setSortOrder(it) }
@@ -141,12 +144,23 @@ fun MoviesScreen(
                             focusedBorder = Border(BorderStroke(2.dp, FocusBorder))
                         )
                     ) {
-                        Text(
-                            "\uD83D\uDD0D Search",
+                        Row(
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = TextSecondary
-                        )
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = null,
+                                modifier = Modifier.size(16.dp),
+                                tint = TextSecondary
+                            )
+                            Text(
+                                "Search",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = TextSecondary
+                            )
+                        }
                     }
                 }
             LazyVerticalGrid(
@@ -158,7 +172,7 @@ fun MoviesScreen(
                 items(uiState.movies, key = { it.id }) { movie ->
                     MovieCard(
                         movie = movie,
-                        onClick = { navController.navigate(Screen.Player.createRoute(movie.streamUrl, movie.name)) },
+                        onClick = { navController.navigate(Screen.MovieDetail.createRoute(movie.id)) },
                         onFavoriteToggle = { viewModel.toggleFavorite(movie) }
                     )
                 }

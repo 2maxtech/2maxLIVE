@@ -88,18 +88,19 @@ fun PlayerScreen(
     val exoPlayer = remember {
         val httpDataSource = DefaultHttpDataSource.Factory()
             .setUserAgent("Mozilla/5.0 (Linux; Android 9; TV) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.164 Mobile Safari/537.36")
-            .setConnectTimeoutMs(15000)
-            .setReadTimeoutMs(20000)
+            .setConnectTimeoutMs(30000)
+            .setReadTimeoutMs(60000)
             .setAllowCrossProtocolRedirects(true)
 
         val loadControl = DefaultLoadControl.Builder()
             .setBufferDurationsMs(
-                15_000,   // min buffer
-                60_000,   // max buffer
-                1_500,    // buffer for playback start
-                3_000     // buffer for playback after rebuffer
+                30_000,   // min buffer (30s for 4K)
+                120_000,  // max buffer (2 min)
+                3_000,    // buffer for playback start
+                5_000     // buffer for playback after rebuffer
             )
-            .setPrioritizeTimeOverSizeThresholds(true)
+            .setPrioritizeTimeOverSizeThresholds(false)
+            .setBackBuffer(30_000, true)
             .build()
 
         val renderersFactory = DefaultRenderersFactory(context)
@@ -122,10 +123,10 @@ fun PlayerScreen(
             }
     }
 
-    // Auto-hide overlay after 5 seconds
+    // Auto-hide overlay after 10 seconds
     LaunchedEffect(showOverlay) {
         if (showOverlay) {
-            delay(5000)
+            delay(10000)
             showOverlay = false
         }
     }

@@ -1,12 +1,13 @@
 package com.twomax.live.ui.screens.profiles
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,13 +19,10 @@ import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.MaterialTheme
-import androidx.tv.material3.Surface
-import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.Text
 import com.twomax.live.core.model.Provider
 import com.twomax.live.core.model.ProviderType
 import com.twomax.live.data.sync.SyncEngine
-import com.twomax.live.ui.navigation.Screen
 import com.twomax.live.ui.theme.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -43,31 +41,17 @@ fun ProfilesScreen(
             .padding(32.dp)
     ) {
         // Header
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        Column {
             Text(
-                text = "Profiles",
+                text = "Playlists",
                 style = MaterialTheme.typography.headlineLarge,
                 color = TextPrimary
             )
-
-            Button(
-                onClick = { navController.navigate(Screen.Setup.route) },
-                colors = ButtonDefaults.colors(
-                    containerColor = Primary,
-                    contentColor = TextPrimary,
-                    focusedContainerColor = PrimaryVariant,
-                    focusedContentColor = TextPrimary
-                )
-            ) {
-                Text(
-                    text = "Add Provider",
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                )
-            }
+            Text(
+                text = "Manage playlists at 2maxplayer.com",
+                style = MaterialTheme.typography.bodySmall,
+                color = TextDisabled
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -121,14 +105,20 @@ fun ProfilesScreen(
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "No providers configured",
+                        text = "No playlists found",
                         style = MaterialTheme.typography.titleLarge,
                         color = TextSecondary
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Add a provider to get started",
+                        text = "Add playlists at 2maxplayer.com",
                         style = MaterialTheme.typography.bodyLarge,
+                        color = TextDisabled
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "Restart the app after adding",
+                        style = MaterialTheme.typography.bodySmall,
                         color = TextDisabled
                     )
                 }
@@ -142,7 +132,6 @@ fun ProfilesScreen(
                         provider = provider,
                         isSyncing = uiState.isSyncing && uiState.syncingProviderId == provider.id,
                         onSync = { viewModel.sync(provider) },
-                        onDelete = { viewModel.delete(provider) },
                         onSetActive = { viewModel.setActive(provider) }
                     )
                 }
@@ -157,7 +146,6 @@ private fun ProviderCard(
     provider: Provider,
     isSyncing: Boolean,
     onSync: () -> Unit,
-    onDelete: () -> Unit,
     onSetActive: () -> Unit
 ) {
     Box(
@@ -173,38 +161,32 @@ private fun ProviderCard(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // Checkmark for active provider
+            if (provider.isActive) {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = "Active",
+                    tint = Success,
+                    modifier = Modifier.size(28.dp)
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+            } else {
+                Spacer(modifier = Modifier.width(40.dp))
+            }
+
             Column(modifier = Modifier.weight(1f)) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(
-                        text = provider.name,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = TextPrimary
-                    )
-                    if (provider.isActive) {
-                        Box(
-                            modifier = Modifier
-                                .clip(MaterialTheme.shapes.small)
-                                .background(Primary)
-                        ) {
-                            Text(
-                                text = "Active",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = TextPrimary,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
-                            )
-                        }
-                    }
-                }
+                Text(
+                    text = provider.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = if (provider.isActive) TextPrimary else TextSecondary
+                )
 
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
                     text = providerTypeLabel(provider.type),
                     style = MaterialTheme.typography.bodyMedium,
-                    color = TextSecondary
+                    color = TextDisabled
                 )
 
                 if (provider.lastSynced > 0) {
@@ -222,14 +204,14 @@ private fun ProviderCard(
                     Button(
                         onClick = onSetActive,
                         colors = ButtonDefaults.colors(
-                            containerColor = Surface,
-                            contentColor = TextSecondary,
-                            focusedContainerColor = Primary,
+                            containerColor = Primary,
+                            contentColor = TextPrimary,
+                            focusedContainerColor = PrimaryVariant,
                             focusedContentColor = TextPrimary
                         )
                     ) {
                         Text(
-                            text = "Set Active",
+                            text = "Select",
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
                         )
                     }
@@ -266,21 +248,6 @@ private fun ProviderCard(
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
                         )
                     }
-                }
-
-                Button(
-                    onClick = onDelete,
-                    colors = ButtonDefaults.colors(
-                        containerColor = Surface,
-                        contentColor = Error,
-                        focusedContainerColor = Error,
-                        focusedContentColor = TextPrimary
-                    )
-                ) {
-                    Text(
-                        text = "Delete",
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
-                    )
                 }
             }
         }

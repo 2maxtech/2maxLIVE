@@ -40,12 +40,7 @@ class SetupViewModel @Inject constructor(
     private val syncEngine: SyncEngine
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(SetupUiState(
-        providerName = "dream4k",
-        xtreamServer = "http://1ere-serrvices.com:80",
-        xtreamUsername = "zek7zyzuh5",
-        xtreamPassword = "sktc8pux8l"
-    ))
+    private val _uiState = MutableStateFlow(SetupUiState())
     val uiState: StateFlow<SetupUiState> = _uiState.asStateFlow()
 
     fun updateProviderName(name: String) { _uiState.update { it.copy(providerName = name) } }
