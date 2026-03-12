@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 300" width="960" height="300">
+  <defs>
+    <linearGradient id="v4_ring" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#B388FF"/>
+      <stop offset="50%" stop-color="#7C4DFF"/>
+      <stop offset="100%" stop-color="#651FFF"/>
+    </linearGradient>
+
+    <linearGradient id="v4_play" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#EEEEFF"/>
+      <stop offset="100%" stop-color="#B388FF"/>
+    </linearGradient>
+
+    <linearGradient id="v4_innerFill" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#7C4DFF" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#651FFF" stop-opacity="0.08"/>
+    </linearGradient>
+
+    <linearGradient id="v4_textBold" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#7C4DFF"/>
+      <stop offset="100%" stop-color="#651FFF"/>
+    </linearGradient>
+
+    <!-- Metallic gradient for custom X -->
+    <linearGradient id="v4_xGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#EEEEFF"/>
+      <stop offset="35%" stop-color="#B388FF"/>
+      <stop offset="70%" stop-color="#7C4DFF"/>
+      <stop offset="100%" stop-color="#651FFF"/>
+    </linearGradient>
+
+    <linearGradient id="v4_textLight" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#9575CD"/>
+      <stop offset="100%" stop-color="#7C4DFF"/>
+    </linearGradient>
+
+    <linearGradient id="v4_playerText" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#7C4DFF"/>
+      <stop offset="100%" stop-color="#B388FF"/>
+    </linearGradient>
+
+    <filter id="v4_iconGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="0" stdDeviation="10" flood-color="#7C4DFF" flood-opacity="0.25"/>
+    </filter>
+
+    <filter id="v4_textShadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#7C4DFF" flood-opacity="0.15"/>
+    </filter>
+
+    <style>
+      @keyframes orbit { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      .v4orbit { animation: orbit 20s linear infinite; transform-origin: 110px 130px; }
+    </style>
+  </defs>
+
+  <!-- === ICON: Orbital ring with play === -->
+  <g filter="url(#v4_iconGlow)">
+    <!-- Outer ring -->
+    <circle cx="110" cy="130" r="78" fill="none" stroke="url(#v4_ring)" stroke-width="4.5" opacity="0.85"/>
+
+    <!-- Inner filled circle -->
+    <circle cx="110" cy="130" r="62" fill="url(#v4_innerFill)" stroke="#7C4DFF" stroke-width="1.5" opacity="0.5"/>
+
+    <!-- Play triangle -->
+    <polygon points="93,95 93,165 148,130" fill="url(#v4_play)" opacity="0.92"/>
+
+    <!-- Top arc highlight -->
+    <path d="M 55,85 A 70,70 0 0,1 165,85" fill="none" stroke="#B388FF" stroke-width="1.5" opacity="0.15"/>
+  </g>
+
+
+  <!-- === WORDMARK: single element for consistent spacing === -->
+  <g filter="url(#v4_textShadow)">
+    <text x="228" y="168" font-family="'Montserrat', 'Poppins', 'SF Pro Display', sans-serif"
+          font-size="108" font-weight="900" fill="url(#v4_textBold)" letter-spacing="2"
+          stroke="url(#v4_textBold)" stroke-width="3">2maX</text>
+  </g>
+
+  <!-- === PLAYER subtitle - centered, lighter weight, different font === -->
+  <text x="360" y="212" font-family="'Raleway', 'Quicksand', 'Nunito Sans', sans-serif"
+        font-size="26" font-weight="400" fill="url(#v4_playerText)" letter-spacing="14" opacity="0.8"
+        text-anchor="middle">PLAYER</text>
+
+</svg>
