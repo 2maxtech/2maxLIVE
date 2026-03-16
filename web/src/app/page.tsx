@@ -1,6 +1,24 @@
+'use client'
+
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
+
+const DEFAULT_DOWNLOAD_URL = 'ncloud.2max.tech/s/FDyiCYpwZEFmwKW'
 
 export default function Home() {
+  const [downloadUrl, setDownloadUrl] = useState(DEFAULT_DOWNLOAD_URL)
+
+  useEffect(() => {
+    fetch('/api/settings')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.download_url) {
+          setDownloadUrl(data.download_url.replace(/^https?:\/\//, ''))
+        }
+      })
+      .catch(() => {})
+  }, [])
+
   return (
     <div className="relative min-h-screen overflow-hidden">
       {/* Background gradient orbs */}
@@ -49,19 +67,69 @@ export default function Home() {
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row gap-4 animate-fade-in-up animate-delay-3">
-            <Link
-              href="/activation"
+            <a
+              href="#download"
               className="btn-primary text-base px-10 py-4 glow-purple inline-block no-underline"
               style={{ animation: 'pulse-glow 3s ease-in-out infinite' }}
             >
-              Activate Your Device
-            </Link>
-            <a
-              href="#how-it-works"
+              Download App
+            </a>
+            <Link
+              href="/activation"
               className="btn-secondary text-base px-10 py-4 inline-block no-underline text-center"
             >
-              Learn More
-            </a>
+              Activate Device
+            </Link>
+          </div>
+        </section>
+
+        {/* Download Section */}
+        <section id="download" className="px-6 md:px-12 py-20 max-w-4xl mx-auto">
+          <div className="glass-card p-10 md:p-14 text-center animate-fade-in-up">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Install on Your{' '}
+              <span className="bg-gradient-to-r from-primary-light via-primary to-accent bg-clip-text text-transparent">
+                Android TV
+              </span>
+            </h2>
+            <p className="text-txt-secondary text-lg mb-10 max-w-xl mx-auto">
+              Use the <strong className="text-txt-primary">Downloader</strong> app on your Android TV or Fire TV device and enter this URL:
+            </p>
+
+            <div className="relative inline-block w-full max-w-lg">
+              <div className="bg-bg-deep/80 border-2 border-primary/30 rounded-2xl px-8 py-6">
+                <p className="text-xs text-txt-disabled uppercase tracking-widest mb-2">Downloader URL</p>
+                <p className="text-2xl md:text-3xl font-mono font-bold text-primary-light tracking-wide select-all break-all">
+                  {downloadUrl}
+                </p>
+              </div>
+              <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-primary/20 via-accent/20 to-primary/20 -z-10 blur-sm" />
+            </div>
+
+            <div className="mt-10 grid sm:grid-cols-3 gap-4 text-left max-w-2xl mx-auto">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-sm font-bold text-primary-light">1</span>
+                </div>
+                <p className="text-sm text-txt-secondary">Open <strong className="text-txt-primary">Downloader</strong> app on your TV</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-sm font-bold text-primary-light">2</span>
+                </div>
+                <p className="text-sm text-txt-secondary">Enter the <strong className="text-txt-primary">URL</strong> above and press Go</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-sm font-bold text-primary-light">3</span>
+                </div>
+                <p className="text-sm text-txt-secondary"><strong className="text-txt-primary">Install</strong> the downloaded APK</p>
+              </div>
+            </div>
+
+            <p className="text-txt-disabled text-xs mt-8">
+              Don&apos;t have Downloader? Search for &quot;Downloader&quot; in the Amazon App Store or Google Play Store on your TV device.
+            </p>
           </div>
         </section>
 
@@ -80,7 +148,7 @@ export default function Home() {
                 step: '01',
                 title: 'Install 2maX player',
                 description:
-                  'Download and install the 2maX player app on your Android TV device from the app store.',
+                  'Open the Downloader app on your Android TV device and enter the code shown below to download and install 2maX player.',
                 icon: (
                   <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />

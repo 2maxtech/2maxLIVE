@@ -19,6 +19,18 @@ async function main() {
   })
 
   console.log(`Admin user seeded: ${email}`)
+
+  // Seed default settings
+  await prisma.setting.upsert({
+    where: { key: 'download_url' },
+    update: {},
+    create: {
+      key: 'download_url',
+      value: 'https://ncloud.2max.tech/s/FDyiCYpwZEFmwKW',
+    },
+  })
+
+  console.log('Default settings seeded')
 }
 
 main()

@@ -5,6 +5,15 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+import java.util.Properties
+import java.io.FileInputStream
+
+val localProps = Properties()
+val localFile = rootProject.file("local.properties")
+if (localFile.exists()) {
+    FileInputStream(localFile).use { localProps.load(it) }
+}
+
 android {
     namespace = "com.twomax.live"
     compileSdk = 34
@@ -20,16 +29,16 @@ android {
     signingConfigs {
         create("release") {
             storeFile = file("../2maxlive.jks")
-            storePassword = "2maxlive123"
-            keyAlias = "2maxlive"
-            keyPassword = "2maxlive123"
+            storePassword = localProps.getProperty("KEYSTORE_PASSWORD", "")
+            keyAlias = localProps.getProperty("KEY_ALIAS", "")
+            keyPassword = localProps.getProperty("KEY_PASSWORD", "")
         }
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
-            isShrinkResources = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
